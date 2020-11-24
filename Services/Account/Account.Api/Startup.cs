@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Account.Api.Database;
 using Account.Api.Database.Repositories;
+using Account.Api.Infrastructure;
 using Account.Api.Models.Validators;
 using Account.Api.Services;
 using FluentValidation.AspNetCore;
@@ -63,6 +64,18 @@ namespace Account.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            //Setup allowed domain to access the service
+            string allowedDomains = Configuration.GetValue<string>("AppSettings:AllowedDomains");
+            string[] crossDomains = allowedDomains.Split(",".ToCharArray());
+            foreach (var domain in crossDomains)
+            {
+                app.UseCors(options =>
+                options.WithOrigins(domain)
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+            }
+
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -88,6 +101,7 @@ namespace Account.Api
         {
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ICommandService, CommandService>();
+            services.AddScoped<IRSAHelper, RSAHelper>();
         }
         private void ConfigureDatabase(IServiceCollection services)
         {

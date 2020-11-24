@@ -7,6 +7,6 @@ namespace Account.Api.Services
 {
     public interface ICommandService
     {
-        Task<Result> RegisterAsync(UserRegistration registration);    
+        Task<ServiceResponse> RegisterAsync(UserRegistration registration);    
     }
 }

@@ -40,7 +40,6 @@ namespace Account.Api.Infrastructure
                 }
             }
         }
-
         public static string DecryptString(string cipherText, string keyString)
         {
             var fullCipher = Convert.FromBase64String(cipherText);

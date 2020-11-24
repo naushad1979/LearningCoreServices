@@ -11,12 +11,14 @@ namespace Account.Api.Services
     {
         private const string key = "E546C8DF278CD5931069B522E695D4F2";
         private readonly IAccountRepository repository;
-        public CommandService(IAccountRepository repository)
+        private readonly IRSAHelper rSAHelper;
+        public CommandService(IAccountRepository repository, IRSAHelper rSAHelper)
         {
             this.repository = repository;
+            this.rSAHelper = rSAHelper;
         }
 
-        public async Task<Result> RegisterAsync(UserRegistration registration)
+        public async Task<ServiceResponse> RegisterAsync(UserRegistration registration)
         {
             try
             {
@@ -24,18 +26,23 @@ namespace Account.Api.Services
                 registration.DateUpdated = null;
                 registration.Active = false;
 
-                registration.Password = EncryptHelper.EncryptString(registration.Password, key);
+                //Decrypted password which is based on public and private key
+                var decryptedPassword = rSAHelper.Decrypt(registration.Password);
+
+                //For database specific secured password
+                registration.Password = EncryptHelper.EncryptString(decryptedPassword, key);
 
                 await repository.RegisterAsync(registration);
-                return new Result 
-                { 
-                    ResultCode = ResultCode.Created, 
-                    SuccessMessage = "Your account has been created. You will receive an email to activate the account." 
+                return new ServiceResponse
+                {
+                    Status = true,
+                    Message = string.Format("Dear {0}{1}{2}", registration.Name, " ",
+                    "Your account has been created. You will receive an email to activate your account.") 
                 };
             }
             catch (Exception ex)
             {
-                return new Result { ResultCode = ResultCode.Exception, ErrorMessage = ex.Message };
+                return new ServiceResponse { Status = false, Message = ex.Message };
             }
         }
     }

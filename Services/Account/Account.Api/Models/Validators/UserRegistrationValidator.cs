@@ -16,6 +16,7 @@ namespace Account.Api.Models.Validators
 				.Matches(emailRegx).WithMessage("A valid email address is required.");
 			RuleFor(x => x.Name).NotEmpty().WithMessage("Name is mandatory!");
 			RuleFor(x => x.Password).NotEmpty().WithMessage("Password is mandatory!");
+			RuleFor(x => x.Mobile).NotEmpty().WithMessage("Mobile number is mandatory!");
 		}
 	}
 }

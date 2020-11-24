@@ -21,20 +21,13 @@ namespace Account.Api.Controllers
         }
 
         [HttpPost]
-        [Route("UserRegister")]
+        [Route("UserSignup")]
         public async Task<IActionResult> Register([FromBody] UserRegistration request)
         {
             try
             {
                 var response = await commandService.RegisterAsync(request);
-                if (response.ResultCode != ResultCode.Exception)
-                {
-                    return Ok(response);
-                }
-                else
-                {
-                    return BadRequest(response);
-                }
+                return Ok(response);
             }
             catch (Exception ex)
             {

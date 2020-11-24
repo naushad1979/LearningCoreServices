@@ -8,6 +8,7 @@ namespace Account.Api.Database.Repositories
     {
         public AccountRepository(DatabaseContext dbContext) : base(dbContext)
         {
+
         }
 
         public async Task<int> RegisterAsync(UserRegistration registration)
